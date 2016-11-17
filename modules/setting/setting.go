@@ -47,10 +47,6 @@ const (
 )
 
 var (
-	// Build information should only be set by -ldflags.
-	BuildTime    string
-	BuildGitHash string
-
 	// App settings
 	AppVer         string
 	AppName        string
@@ -632,11 +628,6 @@ var logLevels = map[string]string{
 
 func newLogService() {
 	log.Info("%s %s", AppName, AppVer)
-
-	if len(BuildTime) > 0 {
-		log.Info("Build Time: %s", BuildTime)
-		log.Info("Build Git Hash: %s", BuildGitHash)
-	}
 
 	// Get and check log mode.
 	LogModes = strings.Split(Cfg.Section("log").Key("MODE").MustString("console"), ",")
