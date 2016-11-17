@@ -13,9 +13,7 @@ JAVASCRIPTS :=
 
 VERSION = $(shell git describe --tags --always)
 
-LDFLAGS += -X "code.gitea.io/gitea.Version=$(VERSION)"
-LDFLAGS += -X "code.gitea.io/gitea/modules/setting.BuildTime=$(DATE)"
-LDFLAGS += -X "code.gitea.io/gitea/modules/setting.BuildGitHash=$(SHA)"
+LDFLAGS += -X "main.Version=$(VERSION)"
 
 TARGETS ?= linux/*,darwin/*,windows/*
 PACKAGES ?= $(shell go list ./... | grep -v /vendor/)
@@ -39,6 +37,7 @@ all: clean test build
 clean:
 	go clean -i ./...
 	rm -rf $(BIN) $(DIST)
+	rm templates/.VERSION
 
 .PHONY: deps
 deps:
@@ -73,10 +72,13 @@ install: $(BIN)/$(EXECUTABLE)
 	cp $< $(GOPATH)/bin/
 
 .PHONY: build
-build: $(BIN)/$(EXECUTABLE)
+build: $(BIN)/$(EXECUTABLE) templates/.VERSION
 
 $(BIN)/$(EXECUTABLE): $(wildcard *.go)
 	go build -v -tags '$(TAGS)' -ldflags '-s -w $(LDFLAGS)' -o $@
+
+templates/.VERSION:
+	echo -n $(VERSION) > $@
 
 .PHONY: release
 release: release-build release-copy release-check
