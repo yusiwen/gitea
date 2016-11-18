@@ -37,7 +37,6 @@ all: clean test build
 clean:
 	go clean -i ./...
 	rm -rf $(BIN) $(DIST)
-	rm templates/.VERSION
 
 .PHONY: deps
 deps:
